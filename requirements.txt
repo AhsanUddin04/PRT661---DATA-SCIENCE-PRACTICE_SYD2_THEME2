@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 ﻿pandas>=2.0
 numpy>=1.24
 sqlalchemy>=2.0
 psycopg2-binary>=2.9
 requests>=2.31
+=======
+streamlit>=1.32
+pandas>=2.0
+numpy>=1.24
+plotly>=5.18
+>>>>>>> 6061e3964df05dcabeb0b6c310cd65f64b7a82ca
