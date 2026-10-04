@@ -110,15 +110,3 @@ Key risks — single-state pilot generalisability, non-arm's-length sale
 records, structural market breaks (COVID-19, rate changes), and uneven team
 contribution after a member's withdrawal — are tracked with mitigations in
 report Section 3.13.
-
-## References
-
-Australian Bureau of Statistics. (2026). *Total value of dwellings*.
-https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/total-value-dwellings
-
-Australian Bureau of Statistics. (2021). *Residential property price
-indexes: Eight capital cities (archived)*.
-https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/residential-property-price-indexes-eight-capital-cities
-
-NSW Government. (2026). *How to find property sales information*.
-https://www.nsw.gov.au/housing-and-construction/land-values-nsw/how-to-find-property-sales-information
