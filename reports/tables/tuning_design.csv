@@ -1,0 +1,17 @@
+model,universe,weight,winsor,objective,RMSE,MAE,MedAE,R2,DirAcc,N,sec
+LightGBM,all,False,False,l2,15.377,9.684,6.334,0.293,66.509,4437,8.0
+LightGBM,all,False,False,huber,14.644,9.459,6.222,0.358,66.667,4437,9.0
+LightGBM,all,False,True,l2,14.831,9.517,6.295,0.342,66.486,4437,8.5
+LightGBM,all,False,True,huber,14.741,9.463,6.25,0.35,66.599,4437,6.7
+LightGBM,all,True,False,l2,15.277,9.688,6.31,0.302,66.667,4437,7.7
+LightGBM,all,True,False,huber,14.664,9.443,6.261,0.357,66.96,4437,7.7
+LightGBM,all,True,True,l2,14.88,9.55,6.249,0.338,66.554,4437,7.4
+LightGBM,all,True,True,huber,14.775,9.438,6.252,0.347,66.847,4437,8.8
+LightGBM,liquid,False,False,l2,14.923,9.606,6.34,0.334,66.238,4437,5.1
+LightGBM,liquid,False,False,huber,14.816,9.496,6.291,0.343,66.779,4437,6.4
+LightGBM,liquid,False,True,l2,15.142,9.631,6.347,0.314,66.599,4437,6.8
+LightGBM,liquid,False,True,huber,14.964,9.503,6.299,0.33,67.117,4437,6.1
+LightGBM,liquid,True,False,l2,14.894,9.644,6.408,0.336,66.058,4437,4.5
+LightGBM,liquid,True,False,huber,14.792,9.476,6.174,0.345,66.509,4437,4.8
+LightGBM,liquid,True,True,l2,15.156,9.629,6.314,0.313,65.855,4437,7.8
+LightGBM,liquid,True,True,huber,14.966,9.498,6.239,0.33,66.509,4437,6.0
