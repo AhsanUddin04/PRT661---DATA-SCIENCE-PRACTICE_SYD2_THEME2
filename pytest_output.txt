@@ -1,0 +1,14 @@
+tests/test_pipeline.py::test_parser_reads_nested_archives PASSED
+tests/test_pipeline.py::test_cleaning_rules_and_reconciliation PASSED
+tests/test_pipeline.py::test_outliers_flagged_not_deleted PASSED
+tests/test_pipeline.py::test_grid_is_complete_and_qoq_never_spans_a_gap PASSED
+tests/test_pipeline.py::test_partial_quarter_has_no_target PASSED
+tests/test_pipeline.py::test_features_do_not_look_ahead PASSED
+tests/test_pipeline.py::test_abs_regressor_is_lagged_one_quarter PASSED
+tests/test_pipeline.py::test_metrics_known_values PASSED
+tests/test_pipeline.py::test_interval_scores_coverage PASSED
+tests/test_pipeline.py::test_diebold_mariano_detects_better_model PASSED
+tests/test_pipeline.py::test_sample_weight_is_capped_sqrt PASSED
+tests/test_pipeline.py::test_full_run_reproduces_a2_table_3_1 PASSED
+tests/test_pipeline.py::test_published_forecasts_are_ordered_and_suppressed PASSED
+============================== 13 passed in 1.79s ==============================

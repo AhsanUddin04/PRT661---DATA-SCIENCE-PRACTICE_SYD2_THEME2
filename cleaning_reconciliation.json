@@ -1,0 +1,10 @@
+{
+ "raw_parsed": 2762903,
+ "duplicates_removed": 237770,
+ "non_residential_removed": 429788,
+ "outside_window_removed": 995,
+ "price_floor_removed": 1850,
+ "outliers_flagged": 85800,
+ "cleaned_total": 2092500,
+ "total_removed": 670403
+}

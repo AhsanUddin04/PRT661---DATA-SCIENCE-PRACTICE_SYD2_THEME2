@@ -1,0 +1,23 @@
+$ psql -U raiyan_mohd (analyst role)
+ count  
+--------
+ 226160
+(1 row)
+
+ERROR:  permission denied for table raw_sales
+$ psql -U prt661_app (web-app role)
+ count 
+-------
+ 55883
+(1 row)
+
+ERROR:  permission denied for table cleaned_sales
+$ psql -U ferdous_anik (ETL role)
+         stage         | status | rows_out 
+-----------------------+--------+----------
+ load_raw_sales        | ok     |  2762903
+ load_feature_store_v2 | ok     |   226160
+ load_suburb_dim       | ok     |     4111
+(3 rows)
+
+ERROR:  must be owner of table feature_store
