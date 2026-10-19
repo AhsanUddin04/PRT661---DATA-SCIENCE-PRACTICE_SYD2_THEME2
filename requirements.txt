@@ -1,12 +1,21 @@
-<<<<<<< HEAD
-﻿pandas>=2.0
-numpy>=1.24
-sqlalchemy>=2.0
-psycopg2-binary>=2.9
+# Full pipeline (pinned to the versions the A4 results were produced with)
+pandas==3.0.5
+numpy>=2.0,<3
+pyarrow==25.0.1
+scipy>=1.13
+scikit-learn==1.9.1
+lightgbm==4.7.0
+xgboost==3.4.1
+statsmodels>=0.14
+prophet==1.5.0
+shap==0.53.0
+matplotlib>=3.9
+joblib>=1.4
 requests>=2.31
-=======
-streamlit>=1.32
-pandas>=2.0
-numpy>=1.24
-plotly>=5.18
->>>>>>> 6061e3964df05dcabeb0b6c310cd65f64b7a82ca
+sqlalchemy==2.1.4
+psycopg2-binary==2.9.13
+streamlit>=1.40
+plotly>=5.24
+pytest>=8
+ruff>=0.6
+-e .

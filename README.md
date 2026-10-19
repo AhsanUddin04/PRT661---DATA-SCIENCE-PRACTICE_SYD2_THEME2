@@ -1,112 +1,45 @@
-# Australian House Price Forecasting
-## PRT661 Data Science Practice — Sydn2, Theme 2
+# NSW Suburb House-Price Forecasting — PRT661 Sydn2 · Theme 2
 
-Forecasting residential property prices across NSW using cleaned historical
-sales data and machine-learning / time-series analysis, with forecast
-uncertainty presented alongside every prediction so users can interpret
-results responsibly rather than treating them as guarantees.
+Forecasts the quarter-on-quarter change in each NSW suburb's median residential sale price 1–4 quarters ahead,
+with calibrated 10th–90th percentile bands, from NSW Valuer General bulk sales data and ABS benchmarks.
 
-**Status:** Assessment 2 — Progress Report and Development.
-Assessment 1 covered project proposal and design; this stage adds a real
-database, a working data-cleaning pipeline, three backtested model families,
-and a working web application.
+**Status:** Assessment 4 — final release v4.0.0 (reproducible pipeline, tested, deployable app).
 
----
-
-## Repository structure
-
-| Folder / file | What's in it |
-|---|---|
-| `reports/` | The combined Assessment 2 PDF (includes the full Assessment 1 report), and the working Word draft |
-| `database/schema.sql` | PostgreSQL table definitions (`raw_sales`, `suburb_dim`, `abs_benchmark`, `cleaned_sales`, `feature_store`) |
-| `data/` | Modelling-ready CSV exports: feature store, backtest results, ABS benchmark, and a small cleaned-sales sample |
-| `webapp/` | The working Streamlit web app (`app.py`) and its own copy of the data it needs to run |
-| `docs/` | Architecture diagram, workflow diagram, data sources log, task allocation, sprint/planning records, changelog |
-| `src/` *(to add)* | Data acquisition, cleaning, feature-engineering and model-training scripts — **see note below** |
-| `models/` *(to add)* | Saved trained model files, if/when exported — **see note below** |
-
-### Two folders the team still needs to add
-
-- **`src/`** — the actual Python scripts that produced everything in `data/`
-  (acquisition, cleaning, feature engineering, model training/backtesting).
-  These exist somewhere on a team member's machine or in notebooks — they
-  need to be added here so the repository is genuinely reproducible, not
-  just a place where outputs are stored.
-- **`models/`** — if any trained model files were saved (e.g. a pickled
-  Gradient Boosting model via `joblib`), add them here. If none were saved,
-  a short note in this folder saying so is better than leaving it implied.
-
-## Running the web app
-
+## Quick start
 ```bash
-cd webapp
 pip install -r requirements.txt
-streamlit run app.py
+streamlit run app/app.py                       # the web app (uses only app/data/)
+pytest -q                                      # 13 tests incl. look-ahead and reproduction tests
+python -m prt661.pipeline --stages parse clean features     # rebuild data from data/raw/nsw/*.zip
+make all                                       # everything, incl. back-tests and report figures
 ```
-See `webapp/README.md` for deployment instructions (Streamlit Community
-Cloud, free, ~2 minutes).
 
-## Environment / reproducibility
+## Headline results (walk-forward test 2024-Q3–2026-Q2, h = 1, liquid suburbs, identical cells)
+| Model | RMSE (pp) | MAE (pp) | R² |
+|---|---|---|---|
+| **LightGBM (champion)** | 12.89 | 8.36 | 0.369 |
+| A2 Gradient Boosting (re-run fairly) | 13.20 | 8.54 | 0.339 |
+| SARIMA | 15.58 | 9.75 | 0.078 |
+| Naive persistence | 27.39 | 17.14 | -1.848 |
 
-- Python 3.10+
-- Install everything with `pip install -r webapp/requirements.txt`
-  (extend this file if `src/` scripts need extra packages such as
-  `sqlalchemy`, `psycopg2`, `statsmodels`, `prophet`, or `scikit-learn`)
-- Database: PostgreSQL — load `database/schema.sql` to recreate the schema
+P10–P90 band coverage: 80–81% (target 80%).
 
-## Project objectives
-
-- Acquire publicly available Australian property-sales and housing data.
-- Store and manage the collected data using an appropriate database system.
-- Process and prepare the data for analysis.
-- Apply statistical and machine-learning forecasting techniques.
-- Identify important property, regional and time-related characteristics.
-- Develop visualisations to communicate historical trends and forecasts.
-- Present forecast uncertainty to help users interpret predictions responsibly.
-
-## Problem statement
-
-Property prices do not change uniformly across Australia. This project
-investigates whether government property-sales data, combined with ABS
-information, can be used to predict dwelling-price changes one to four
-quarters ahead with an acceptable level of accuracy — and to communicate
-that accuracy honestly rather than as a single misleading headline number.
-
-## Data sources
-
-See `docs/DATA_SOURCES.md` for the full provenance and licence log.
-
-- **Primary:** NSW Valuer General property-sales bulk data (data.nsw.gov.au)
-- **Supporting:** ABS Total Value of Dwellings; archived ABS Residential
-  Property Price Indexes
-
-## Architecture
-
-See `docs/architecture_diagram.svg` for the full data-flow diagram, and
-Section 3.2 of the report for the detailed write-up.
-
-## Team members
-
-| Team Member | Role |
+## Repository layout
+| Path | Contents |
 |---|---|
-| Ahsan Uddin | Project Lead / Data Acquisition |
-| Ferdous Anwar Anik | Data Engineer |
-| Mohd Yah-Ya Raiyan | Data Analyst |
-| Abrar Bin Khaiyum | Visualisation & Documentation Lead |
+| `src/prt661/` | Package: parsing, cleaning, features, models, backtest, statistical, evaluation, forecast, db, pipeline CLI |
+| `scripts/` | Run scripts for each stage, report assets, app-data publishing |
+| `tests/` | pytest suite (parsing, cleaning reconciliation, gap & look-ahead tests, metrics, published-forecast checks) |
+| `app/` | Streamlit app v4 + its published data (`app/data/`) |
+| `database/` | `schema_a2.sql`, `schema_v2.sql` (new tables, privacy view, roles), `create_member_logins.sql` |
+| `models/` | Production models (`lgbm_cumulative_h*.joblib`), `best_params.json`, `model_registry.json` |
+| `reports/` | Figures, tables (every number in the report), report build scripts, final PDF |
+| `docs/` | CHANGELOG, MODEL_CARD, DATA_SOURCES, SECURITY_AND_PRIVACY, DEPLOYMENT |
+| `notebooks/a2_legacy/` | Assessment 2 notebooks kept for the record |
+| `.github/workflows/` | CI (tests + schema) and weekly scheduled refresh |
 
-Full contribution detail: `docs/task_allocation.md`. Sprint-by-sprint
-planning: `docs/project_planning.md`. Material project changes since
-Assessment 1: `docs/CHANGELOG.md`.
+Raw archives (`data/raw/`) and intermediate parquet files (`data/processed/`) are git-ignored; see `docs/DATA_SOURCES.md`.
 
-## Project management
-
-Jira is used to manage sprint tasks and progress (see
-`docs/workflow_diagram.svg`); GitHub is used for source code, documentation,
-data-source records, and version control.
-
-## Risk and governance
-
-Key risks — single-state pilot generalisability, non-arm's-length sale
-records, structural market breaks (COVID-19, rate changes), and uneven team
-contribution after a member's withdrawal — are tracked with mitigations in
-report Section 3.13.
+## Team
+Ahsan Uddin (lead, acquisition & automation) · Ferdous Anwar Anik (data engineering & database) ·
+Mohd Yah Ya Raiyan (modelling & evaluation) · Abrar Bin Khaiyum (app, deployment & documentation)
