@@ -1,0 +1,46 @@
+[
+ {
+  "model_name": "LightGBM-cumulative",
+  "model_version": "4.0.0",
+  "horizon": 1,
+  "target": "cumulative",
+  "trained_through": "2026-04-01",
+  "artefact_path": "models/lgbm_cumulative_h1.joblib",
+  "artefact_sha256": "98518577b27c5ca548fac114d16989647ed98e22fa44e003499a31aa2d551e6e",
+  "n_train": 54562,
+  "cqr_margin": 0.86
+ },
+ {
+  "model_name": "LightGBM-cumulative",
+  "model_version": "4.0.0",
+  "horizon": 2,
+  "target": "cumulative",
+  "trained_through": "2026-04-01",
+  "artefact_path": "models/lgbm_cumulative_h2.joblib",
+  "artefact_sha256": "a3e40e52f3d1ced3cce5636167523ff5944d7ddc272855079ac3959e111e5a0e",
+  "n_train": 53368,
+  "cqr_margin": 1.511
+ },
+ {
+  "model_name": "LightGBM-cumulative",
+  "model_version": "4.0.0",
+  "horizon": 3,
+  "target": "cumulative",
+  "trained_through": "2026-04-01",
+  "artefact_path": "models/lgbm_cumulative_h3.joblib",
+  "artefact_sha256": "39ad30c3c1246d5bc13d1c72ff1a663a08b0fd369a1a8ba001e7a028ccaf4183",
+  "n_train": 52164,
+  "cqr_margin": 1.348
+ },
+ {
+  "model_name": "LightGBM-cumulative",
+  "model_version": "4.0.0",
+  "horizon": 4,
+  "target": "cumulative",
+  "trained_through": "2026-04-01",
+  "artefact_path": "models/lgbm_cumulative_h4.joblib",
+  "artefact_sha256": "90a274a5bea631c62378abdcfeeb482e75763e314149aa772d334e6571f9c9af",
+  "n_train": 51006,
+  "cqr_margin": 1.651
+ }
+]
