@@ -1,0 +1,29 @@
+digraph G {
+  rankdir=TB; nodesep=0.3; ranksep=0.32; newrank=true; compound=true;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, color="#9aa3ad", fillcolor="#ffffff", penwidth=1.1, width=2.3];
+  edge [color="#6b7480", arrowsize=0.7, penwidth=1.1];
+  subgraph cluster_src { label="1  Sources (CC BY 4.0)"; fontname="Helvetica-Bold"; fontsize=12; style="rounded"; color="#c9ced4"; labeljust=l;
+    vg [label="NSW Valuer General\nweekly / annual bulk sales\n13 archives, 2014–2026"];
+    abs [label="ABS Total Value of\nDwellings (6432.0)\nquarterly"]; }
+  subgraph cluster_ing { label="2  Ingest & clean  (src/prt661)"; fontname="Helvetica-Bold"; fontsize=12; style="rounded"; color="#c9ced4"; labeljust=l;
+    acq [label="acquisition.py\nweekly scheduled job\n(GitHub Actions)"];
+    parse [label="parsing.py\nnested-zip parser\n2,762,903 records"];
+    clean [label="cleaning.py\n5 documented rules\n2,092,500 sales"]; }
+  subgraph cluster_store { label="3  Storage  (PostgreSQL 16)"; fontname="Helvetica-Bold"; fontsize=12; style="rounded"; color="#c9ced4"; labeljust=l;
+    pg [label="raw_sales · cleaned_sales · suburb_dim · abs_benchmark · feature_store_v2\nmodel_registry · forecasts · pipeline_runs   +   privacy view v_public_suburb_quarter (n ≥ 5)\nroles: prt661_etl · prt661_analyst · prt661_app_ro  (one personal login per member)", fillcolor="#eef4fc", color="#2a78d6", width=7.6]; }
+  subgraph cluster_ml { label="4  Features & models"; fontname="Helvetica-Bold"; fontsize=12; style="rounded"; color="#c9ced4"; labeljust=l;
+    feat [label="features.py\ncomplete suburb×quarter grid\n24 features, look-ahead tested"];
+    bt [label="backtest.py\n8-quarter walk-forward\n12 models, identical cells"];
+    fc [label="forecast.py\nLightGBM direct h = 1…4\n+ CQR P10–P90 bands", fillcolor="#fdf0ea", color="#eb6834"]; }
+  subgraph cluster_srv { label="5  Serve & assure"; fontname="Helvetica-Bold"; fontsize=12; style="rounded"; color="#c9ced4"; labeljust=l;
+    pub [label="build_app_data.py\naggregated, suppressed\nfiles only"];
+    app [label="Streamlit app v4\nDocker / Streamlit Cloud"];
+    users [label="Buyers & investors\nPolicy analysts · Team", shape=ellipse, fillcolor="#f4f4f2"]; 
+    }
+
+  {rank=same; vg; abs;} {rank=same; acq; parse; clean;} {rank=same; feat; bt; fc;} {rank=same; pub; app; users;}
+  vg -> acq -> parse -> clean; abs -> pg; clean -> pg;
+  pg -> feat; feat -> bt -> fc; fc -> pg [constraint=false, style=dashed, label=" forecasts", fontname="Helvetica", fontsize=9, fontcolor="#6b7480"];
+  fc -> pub;
+  users -> app -> pub [dir=back];
+}

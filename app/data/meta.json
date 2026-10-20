@@ -1,0 +1,43 @@
+{
+ "anchor_quarter": "2026Q2",
+ "anchor_quarter_date": "2026-04-01",
+ "model_version": "4.0.0",
+ "n_sales_used": 2092500,
+ "champion": "LightGBM",
+ "test_window": "2024-Q3 to 2026-Q2",
+ "cum_coverage": 80.76648743553166,
+ "reconciliation": [
+  {
+   "Stage": "raw parsed",
+   "Rows": "2,762,903"
+  },
+  {
+   "Stage": "duplicates removed",
+   "Rows": "237,770"
+  },
+  {
+   "Stage": "non residential removed",
+   "Rows": "429,788"
+  },
+  {
+   "Stage": "outside window removed",
+   "Rows": "995"
+  },
+  {
+   "Stage": "price floor removed",
+   "Rows": "1,850"
+  },
+  {
+   "Stage": "outliers flagged",
+   "Rows": "85,800"
+  },
+  {
+   "Stage": "cleaned total",
+   "Rows": "2,092,500"
+  },
+  {
+   "Stage": "total removed",
+   "Rows": "670,403"
+  }
+ ]
+}

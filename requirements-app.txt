@@ -1,0 +1,6 @@
+# Minimal runtime for the deployed web app (Streamlit Community Cloud / Docker)
+streamlit>=1.40
+pandas==3.0.5
+pyarrow==25.0.1
+numpy>=2.0,<3
+plotly>=5.24

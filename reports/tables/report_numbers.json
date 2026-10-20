@@ -1,0 +1,589 @@
+{
+ "gap_rows": 7185,
+ "gap_total": 75795,
+ "gap_pct": "9.5",
+ "rec": {
+  "raw_parsed": 2762903,
+  "duplicates_removed": 237770,
+  "non_residential_removed": 429788,
+  "outside_window_removed": 995,
+  "price_floor_removed": 1850,
+  "outliers_flagged": 85800,
+  "cleaned_total": 2092500,
+  "total_removed": 670403
+ },
+ "fs_grid": 226160,
+ "fs_suburbs": 4112,
+ "fs_observed": 120187,
+ "fs_targets": 55198,
+ "n_suburb_dim": 4111,
+ "public_suppressed": 55883,
+ "fc_rows": 5116,
+ "fc_suburbs": 1279,
+ "fc_rel": {
+  "medium": 587,
+  "high": 372,
+  "low": 320
+ },
+ "modules": [
+  {
+   "file": "config.py",
+   "what": "All thresholds and paths in one place (every rule that changes a reported number)",
+   "lines": 52
+  },
+  {
+   "file": "acquisition.py",
+   "what": "Downloads NSW VG weekly/annual archives and the latest ABS workbook (from A2, adapted)",
+   "lines": 124
+  },
+  {
+   "file": "parsing.py",
+   "what": "Streams nested zip archives and parses Valuer General B-records (24 fields)",
+   "lines": 89
+  },
+  {
+   "file": "cleaning.py",
+   "what": "Five documented cleaning rules with a reconciliation count for each",
+   "lines": 78
+  },
+  {
+   "file": "features.py",
+   "what": "Complete suburb \u00d7 quarter grid, 24 features, direct QoQ and cumulative targets",
+   "lines": 172
+  },
+  {
+   "file": "models.py",
+   "what": "Baselines, A2 model replica, Ridge, Huber, RF, XGBoost, LightGBM, quantile models",
+   "lines": 93
+  },
+  {
+   "file": "backtest.py",
+   "what": "Expanding-window walk-forward evaluation and CQR intervals",
+   "lines": 84
+  },
+  {
+   "file": "statistical.py",
+   "what": "Per-suburb SARIMA and Prophet on the same window",
+   "lines": 59
+  },
+  {
+   "file": "evaluation.py",
+   "what": "Metrics, Diebold\u2013Mariano test, interval scores",
+   "lines": 53
+  },
+  {
+   "file": "forecast.py",
+   "what": "Production training, forecast publishing, reliability labels, model registry",
+   "lines": 65
+  },
+  {
+   "file": "db.py",
+   "what": "Transactional COPY loader and pipeline audit log",
+   "lines": 96
+  },
+  {
+   "file": "pipeline.py",
+   "what": "Command-line orchestrator (`python -m prt661.pipeline`)",
+   "lines": 110
+  }
+ ],
+ "n_tests": 13,
+ "db_security_lines": [
+  "$ psql -U raiyan_mohd (analyst role)",
+  " count",
+  "--------",
+  " 226160",
+  "ERROR:  permission denied for table raw_sales",
+  "$ psql -U prt661_app (web-app role)",
+  " count",
+  "-------",
+  " 55883",
+  "ERROR:  permission denied for table cleaned_sales",
+  "$ psql -U ferdous_anik (ETL role)",
+  "         stage         | status | rows_out",
+  "-----------------------+--------+----------",
+  " load_raw_sales        | ok     |  2762903",
+  " load_feature_store_v2 | ok     |   226160",
+  " load_suburb_dim       | ok     |     4111",
+  "ERROR:  must be owner of table feature_store"
+ ],
+ "pytest_lines": [
+  "$ pytest -v",
+  "test_parser_reads_nested_archives PASSED",
+  "test_cleaning_rules_and_reconciliation PASSED",
+  "test_outliers_flagged_not_deleted PASSED",
+  "test_grid_is_complete_and_qoq_never_spans_a_gap PASSED",
+  "test_partial_quarter_has_no_target PASSED",
+  "test_features_do_not_look_ahead PASSED",
+  "test_abs_regressor_is_lagged_one_quarter PASSED",
+  "test_metrics_known_values PASSED",
+  "test_interval_scores_coverage PASSED",
+  "test_diebold_mariano_detects_better_model PASSED",
+  "test_sample_weight_is_capped_sqrt PASSED",
+  "test_full_run_reproduces_a2_table_3_1 PASSED",
+  "test_published_forecasts_are_ordered_and_suppressed PASSED",
+  "============================== 13 passed in 1.79s =============================="
+ ],
+ "val": {
+  "LightGBM": {
+   "RMSE": 14.606,
+   "MAE": 9.461
+  },
+  "Random forest": {
+   "RMSE": 14.608,
+   "MAE": 9.463
+  },
+  "XGBoost": {
+   "RMSE": 14.648,
+   "MAE": 9.478
+  },
+  "Ridge": {
+   "RMSE": 14.879,
+   "MAE": 9.664
+  },
+  "Huber regression": {
+   "RMSE": 14.941,
+   "MAE": 9.524
+  }
+ },
+ "design_l2": 15.377,
+ "design_huber": 14.644,
+ "n_liquid": 555,
+ "all_suburbs": 1165,
+ "all_N": 8117,
+ "lb_N": 4435,
+ "lb_suburbs": 555,
+ "lb": [
+  {
+   "model": "Ensemble (LGBM+XGB+RF)",
+   "RMSE": 12.791830309219444,
+   "MAE": 8.333562603545959,
+   "MedAE": 5.498195457152509,
+   "R2": 0.3787522874367769,
+   "DirAcc": 66.67418263810598,
+   "N": 4435,
+   "wMAE": 8.327095418664966,
+   "RMSE_vs_naive_%": 53.291206452379846
+  },
+  {
+   "model": "Random forest",
+   "RMSE": 12.79348675597184,
+   "MAE": 8.351266778625574,
+   "MedAE": 5.519093469780404,
+   "R2": 0.3785913831159601,
+   "DirAcc": 67.37316798196167,
+   "N": 4435,
+   "wMAE": 8.346003716954918,
+   "RMSE_vs_naive_%": 53.28515801149922
+  },
+  {
+   "model": "XGBoost",
+   "RMSE": 12.813489862132784,
+   "MAE": 8.351301406606419,
+   "MedAE": 5.562686955336691,
+   "R2": 0.3766466716794847,
+   "DirAcc": 66.53889515219842,
+   "N": 4435,
+   "wMAE": 8.356491930077622,
+   "RMSE_vs_naive_%": 53.21211756823215
+  },
+  {
+   "model": "LightGBM",
+   "RMSE": 12.886923038765806,
+   "MAE": 8.360340747415787,
+   "MedAE": 5.635514323607871,
+   "R2": 0.3694814135613695,
+   "DirAcc": 66.38105975197294,
+   "N": 4435,
+   "wMAE": 8.33844506971471,
+   "RMSE_vs_naive_%": 52.943979623623406
+  },
+  {
+   "model": "Ridge",
+   "RMSE": 13.102062750276156,
+   "MAE": 8.505429847290186,
+   "MedAE": 5.669039578496052,
+   "R2": 0.3482534009481667,
+   "DirAcc": 66.38105975197294,
+   "N": 4435,
+   "wMAE": 8.526868519925873,
+   "RMSE_vs_naive_%": 52.15840663477685
+  },
+  {
+   "model": "A2 Gradient Boosting",
+   "RMSE": 13.195637923427432,
+   "MAE": 8.543467546525052,
+   "MedAE": 5.640195967421981,
+   "R2": 0.3389105839832614,
+   "DirAcc": 66.58399098083427,
+   "N": 4435,
+   "wMAE": 8.489300967023885,
+   "RMSE_vs_naive_%": 51.81672109500264
+  },
+  {
+   "model": "SARIMA",
+   "RMSE": 15.58146117823879,
+   "MAE": 9.74712415416557,
+   "MedAE": 6.15258496087317,
+   "R2": 0.0782443945566568,
+   "DirAcc": 63.51747463359639,
+   "N": 4435,
+   "wMAE": 9.846837582335626,
+   "RMSE_vs_naive_%": 43.10499469180156
+  },
+  {
+   "model": "Regional momentum",
+   "RMSE": 16.2680321179369,
+   "MAE": 9.972389413879094,
+   "MedAE": 6.186312889271806,
+   "R2": -0.0047764922427395,
+   "DirAcc": 56.3021420518602,
+   "N": 4435,
+   "wMAE": 9.720101065869551,
+   "RMSE_vs_naive_%": 40.59801175793309
+  },
+  {
+   "model": "Historical mean",
+   "RMSE": 17.324053085596184,
+   "MAE": 10.760422293277472,
+   "MedAE": 6.802071257005859,
+   "R2": -0.1394582971858482,
+   "DirAcc": 48.95152198421646,
+   "N": 4435,
+   "wMAE": 10.484476715223837,
+   "RMSE_vs_naive_%": 36.741998648940765
+  },
+  {
+   "model": "Seasonal naive",
+   "RMSE": 22.86545607721032,
+   "MAE": 14.491145405789853,
+   "MedAE": 9.12662918476872,
+   "R2": -0.9849938247454424,
+   "DirAcc": 51.544532130777895,
+   "N": 4435,
+   "wMAE": 14.17257265780438,
+   "RMSE_vs_naive_%": 16.50781463909492
+  },
+  {
+   "model": "Naive persistence",
+   "RMSE": 27.3863427797124,
+   "MAE": 17.1442268161419,
+   "MedAE": 10.654201172199418,
+   "R2": -1.8475247188045003,
+   "DirAcc": 37.70011273957159,
+   "N": 4435,
+   "wMAE": 16.566890180030576,
+   "RMSE_vs_naive_%": 0.0
+  }
+ ],
+ "champ_mae": 8.360340747415787,
+ "champ_r2": 0.3694814135613695,
+ "champ_vs_naive": 52.943979623623406,
+ "sarima_mae": 9.74712415416557,
+ "a2_mae": 8.543467546525052,
+ "champ_vs_sarima_mae": 14.227616113385832,
+ "champ_vs_a2_mae": 2.143471583546308,
+ "prophet": [
+  {
+   "model": "LightGBM",
+   "RMSE": 12.498992640453148,
+   "MAE": 8.416232711380248,
+   "MedAE": 5.867081810942146,
+   "R2": 0.403450161809024,
+   "DirAcc": 66.75,
+   "N": 1200
+  },
+  {
+   "model": "A2 Gradient Boosting",
+   "RMSE": 13.09842480645542,
+   "MAE": 8.707027584874789,
+   "MedAE": 5.878631579361644,
+   "R2": 0.3448588930596431,
+   "DirAcc": 65.75,
+   "N": 1200
+  },
+  {
+   "model": "SARIMA",
+   "RMSE": 15.393270834126753,
+   "MAE": 9.97077412438738,
+   "MedAE": 6.423427453484802,
+   "R2": 0.0951876313998578,
+   "DirAcc": 64.16666666666667,
+   "N": 1200
+  },
+  {
+   "model": "Prophet",
+   "RMSE": 20.07239901486608,
+   "MAE": 12.767037942935584,
+   "MedAE": 8.211385014667954,
+   "R2": -0.5384921010748172,
+   "DirAcc": 49.333333333333336,
+   "N": 1200
+  },
+  {
+   "model": "Naive persistence",
+   "RMSE": 27.5997061918257,
+   "MAE": 17.682769203909942,
+   "MedAE": 11.150518258602698,
+   "R2": -1.908744836261516,
+   "DirAcc": 37.16666666666666,
+   "N": 1200
+  }
+ ],
+ "dm": [
+  {
+   "vs": "Naive persistence",
+   "DM_sq": -13.83548669791922,
+   "p_sq": 1.1846917173126949e-42,
+   "DM_abs": -31.696985867717224,
+   "p_abs": 6.286455374213192e-199
+  },
+  {
+   "vs": "Seasonal naive",
+   "DM_sq": -12.366530142697044,
+   "p_sq": 1.4639687537677156e-34,
+   "DM_abs": -27.435377837034505,
+   "p_abs": 3.384499706060054e-153
+  },
+  {
+   "vs": "Historical mean",
+   "DM_sq": -8.249008735781917,
+   "p_sq": 2.0838217414199815e-16,
+   "DM_abs": -17.047000308340166,
+   "p_abs": 3.641348710995518e-63
+  },
+  {
+   "vs": "Regional momentum",
+   "DM_sq": -6.706582691068686,
+   "p_sq": 2.2425462731928223e-11,
+   "DM_abs": -13.028662140451148,
+   "p_abs": 4.1765154701198565e-38
+  },
+  {
+   "vs": "SARIMA",
+   "DM_sq": -7.115011214343284,
+   "p_sq": 1.2988754659616953e-12,
+   "DM_abs": -11.804311165778474,
+   "p_abs": 1.1004158176117673e-31
+  },
+  {
+   "vs": "A2 Gradient Boosting",
+   "DM_sq": -3.022416218549388,
+   "p_sq": 0.0025219862579049,
+   "DM_abs": -3.790383467816469,
+   "p_abs": 0.000152412718055
+  },
+  {
+   "vs": "Ridge",
+   "DM_sq": -2.590869633916776,
+   "p_sq": 0.0096047367821008,
+   "DM_abs": -3.643551914561255,
+   "p_abs": 0.0002719781947443
+  },
+  {
+   "vs": "Random forest",
+   "DM_sq": 0.9530333553033624,
+   "p_sq": 0.3406251202236566,
+   "DM_abs": 0.3426348235687758,
+   "p_abs": 0.7318894419385611
+  },
+  {
+   "vs": "XGBoost",
+   "DM_sq": 0.9829005615280648,
+   "p_sq": 0.3257100091752967,
+   "DM_abs": 0.4454401265395882,
+   "p_abs": 0.6560234655416572
+  },
+  {
+   "vs": "Ensemble (LGBM+XGB+RF)",
+   "DM_sq": 1.704467310709909,
+   "p_sq": 0.0883638758323302,
+   "DM_abs": 2.1098116884671354,
+   "p_abs": 0.0349304668467047
+  }
+ ],
+ "h4_regional": 9.98330309235933,
+ "champ_dir_h1": 66.38105975197294,
+ "champ_dir_h4": 55.10158013544017,
+ "cov_h1": 80.37485016890051,
+ "cov_h2": 80.53830227743272,
+ "cov_h3": 81.37735643456467,
+ "cov_h4": 81.29018197668083,
+ "raw_h1": 78.17369510733356,
+ "width_h1": 32.857697217353824,
+ "width_h4": 40.25600557586496,
+ "cum": [
+  {
+   "horizon": 1,
+   "model_RMSE": 18.656025042838728,
+   "model_MAE": 10.754033318741246,
+   "model_MedAE": 6.683220944024455,
+   "model_R2": 0.3427319866511881,
+   "model_DirAcc": 67.30957829356,
+   "model_N": 9177,
+   "naive_MAE": 12.997076517706548,
+   "coverage": 80.37485016890051,
+   "mean_width": 32.857697217353824,
+   "median_width": 27.796650091103597,
+   "interval_score": 51.79125556573635,
+   "N": 9177
+  },
+  {
+   "horizon": 2,
+   "model_RMSE": 30.71547661051757,
+   "model_MAE": 11.805681180410666,
+   "model_MedAE": 7.452959150660405,
+   "model_R2": 0.203385123955471,
+   "model_DirAcc": 68.97570584372949,
+   "model_N": 9138,
+   "naive_MAE": 14.414008047251675,
+   "coverage": 79.57977675640184,
+   "mean_width": 34.94430138221939,
+   "median_width": 29.82427981049937,
+   "interval_score": 58.71741497415497,
+   "N": 9138
+  },
+  {
+   "horizon": 3,
+   "model_RMSE": 36.72398481495887,
+   "model_MAE": 12.323879771858016,
+   "model_MedAE": 8.057831121601819,
+   "model_R2": 0.1577615823557402,
+   "model_DirAcc": 69.71397139713972,
+   "model_N": 9090,
+   "naive_MAE": 15.307690909081009,
+   "coverage": 81.0891089108911,
+   "mean_width": 37.57489463267854,
+   "median_width": 32.498345523683966,
+   "interval_score": 60.5010605234497,
+   "N": 9090
+  },
+  {
+   "horizon": 4,
+   "model_RMSE": 34.19895846799675,
+   "model_MAE": 13.08351498846887,
+   "model_MedAE": 8.823510637482588,
+   "model_R2": 0.1780051524086707,
+   "model_DirAcc": 70.00110533878635,
+   "model_N": 9047,
+   "naive_MAE": 16.07835345197447,
+   "coverage": 82.03824472200729,
+   "mean_width": 41.53272518256979,
+   "median_width": 36.24476139884173,
+   "interval_score": 64.14366176828945,
+   "N": 9047
+  }
+ ],
+ "cum_cov": 80.76648743553166,
+ "liq": [
+  {
+   "band": "5\u20139",
+   "N": 1292.0,
+   "MAE_LightGBM": 15.150457043214448,
+   "MAE_naive": 30.78130115380666,
+   "noise_floor": 11.22645735381299,
+   "cov_cqr": 75.77399380804954,
+   "width_cqr": 41.29157742104616,
+   "noise_share_%": 74.0997933051866
+  },
+  {
+   "band": "10\u201319",
+   "N": 2637.0,
+   "MAE_LightGBM": 11.385997258536824,
+   "MAE_naive": 24.853377146135625,
+   "noise_floor": 8.74815797246598,
+   "cov_cqr": 80.81152825180129,
+   "width_cqr": 34.83686634438876,
+   "noise_share_%": 76.83260213247387
+  },
+  {
+   "band": "20\u201339",
+   "N": 2319.0,
+   "MAE_LightGBM": 8.761162818098093,
+   "MAE_naive": 18.35924684503053,
+   "noise_floor": 6.645824373380726,
+   "cov_cqr": 82.36308753773179,
+   "width_cqr": 28.864336654688167,
+   "noise_share_%": 75.85550584281262
+  },
+  {
+   "band": "40\u201379",
+   "N": 1652.0,
+   "MAE_LightGBM": 8.44825850263402,
+   "MAE_naive": 17.801492080148325,
+   "noise_floor": 5.986617593654824,
+   "cov_cqr": 81.35593220338984,
+   "width_cqr": 27.37699374956055,
+   "noise_share_%": 70.86214977664686
+  },
+  {
+   "band": "80+",
+   "N": 798.0,
+   "MAE_LightGBM": 8.228336490802244,
+   "MAE_naive": 16.331167345035848,
+   "noise_floor": 4.539918992891976,
+   "cov_cqr": 78.82205513784461,
+   "width_cqr": 24.530064970989915,
+   "noise_share_%": 55.17420195402515
+  }
+ ],
+ "liq_first_mae": 15.150457043214448,
+ "liq_last_mae": 8.228336490802244,
+ "seg": {
+  "rest_nsw": {
+   "RMSE": 19.67918147458434,
+   "MAE": 10.641939667866126,
+   "MedAE": 6.767200394518795,
+   "R2": 0.3340821214774511,
+   "DirAcc": 68.15286624203821,
+   "N": 4710,
+   "cov": 79.27813163481954,
+   "bias": -1.7276844557156852,
+   "mean_n": 25.61316348195329,
+   "liq_mae": 6.630857354401474
+  },
+  "sydney": {
+   "RMSE": 17.5125861300398,
+   "MAE": 10.872224743774114,
+   "MedAE": 6.614192092332446,
+   "R2": 0.3537359192222225,
+   "DirAcc": 66.4204163868368,
+   "N": 4467,
+   "cov": 81.53122901276024,
+   "bias": -1.5251468684110747,
+   "mean_n": 43.27154689948512,
+   "liq_mae": 9.536449060208032
+  }
+ },
+ "shap": {
+  "dev_from_trend": 40.3,
+  "yoy_pct_change": 12.0,
+  "qoq_roll8_mean": 6.4,
+  "log_price": 6.0,
+  "qoq_pct_change": 5.0,
+  "abs_tvd_growth_lag1": 4.4,
+  "region_qoq_roll4": 4.4,
+  "abs_region_growth_lag1": 2.7,
+  "flag_covid_period": 2.3,
+  "log_ppsqm": 2.1,
+  "target_q2": 2.0,
+  "qoq_lag2": 1.8,
+  "qoq_roll4_std": 1.7,
+  "state_qoq": 1.6,
+  "strata_share_change": 1.2,
+  "strata_share": 1.2,
+  "log_n_sales": 0.9,
+  "qoq_lag1": 0.9,
+  "region_qoq": 0.8,
+  "qoq_roll4_mean": 0.7,
+  "qoq_lag3": 0.6,
+  "sales_vol_change": 0.5,
+  "target_q1": 0.2,
+  "is_sydney": 0.1,
+  "quarters_with_sales_8": 0.1,
+  "flag_rate_hike_period": 0.1,
+  "target_q3": 0.0,
+  "target_q4": 0.0
+ },
+ "app_data_mb": "0.57"
+}
